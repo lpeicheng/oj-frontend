@@ -1,0 +1,97 @@
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { computed, ref } from "vue";
+import { routes } from "../router/routes";
+import checkAccess from "@/access/checkAccess";
+import ACCESS_ENUM from "@/access/accessEnum";
+
+const router = useRouter();
+const store = useStore();
+// 默认主页
+const selectedKeys = ref(["/"]);
+
+const doMenuClick = (key: string) => {
+  router.push({
+    path: key,
+  });
+};
+
+//展示菜单路由数组
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    //根据权限过滤菜单
+    if (
+      !checkAccess(store.state.user.loginUser, item?.meta?.access as string)
+    ) {
+      return false;
+    }
+    return true;
+  });
+});
+
+//路由跳转后更新菜单项
+router.afterEach((to, from, failure) => {
+  selectedKeys.value = [to.path];
+});
+
+setTimeout(() => {
+  store.dispatch("user/getLoginUser", {
+    userName: "管理员",
+    userRole: ACCESS_ENUM.ADMIN,
+  });
+}, 3000);
+</script>
+
+<template>
+  <!--wrap：文本是否换行  align：文本对齐方式-->
+  <a-row id="globalHeader" align="center" :wrap="false">
+    <!--flex：缩放比例根据文本自动调整-->
+    <a-col flex="auto">
+      <a-menu
+        mode="horizontal"
+        :selected-keys="selectedKeys"
+        @menu-item-click="doMenuClick"
+      >
+        <!--padding：元素内边距-->
+        <a-menu-item
+          key="0"
+          :style="{ padding: 0, marginRight: '38px' }"
+          disabled
+        >
+          <div class="title-bar">
+            <img src="../assets/logo.svg" class="logo" />
+            <div class="title">OJ判题系统</div>
+          </div>
+        </a-menu-item>
+        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
+          {{ item.name }}
+        </a-menu-item>
+      </a-menu>
+    </a-col>
+    <a-col flex="100px">
+      <div>
+        {{ store.state.user?.loginUser?.userAccount ?? "未登录" }}
+      </div>
+    </a-col>
+  </a-row>
+</template>
+
+<style scoped>
+.title-bar {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  color: #444;
+  margin-left: 16px;
+}
+
+.logo {
+  height: 48px;
+}
+</style>
