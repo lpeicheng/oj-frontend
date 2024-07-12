@@ -3,32 +3,32 @@
 ## 根据后台生成代码
 
 ```shell
-openapi --input http://localhost:8111/api/v2/api-docs --output ./generated --client axios
+openapi --input http://localhost:8101/api/v2/api-docs --output ./generated --client axios
 ```
 
 
 ## Project setup
 
 ```
-yarn install
+npm install
 ```
 
 ### Compiles and hot-reloads for development
 
 ```
-yarn serve
+npm serve
 ```
 
 ### Compiles and minifies for production
 
 ```
-yarn build
+npm build
 ```
 
 ### Lints and fixes files
 
 ```
-yarn lint
+npm lint
 ```
 
 ### Customize configuration
