@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type UserUpdateMyRequest = {
-    userAccount?: string;
-    userAvatar?: string;
-    userProfile?: string;
+export type CommonResponse_string_ = {
+    code?: number;
+    data?: string;
+    msg?: string;
 };

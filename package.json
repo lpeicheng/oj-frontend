@@ -16,6 +16,7 @@
     "moment": "^2.29.4",
     "monaco-editor": "^0.41.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
+    "resize-observer-polyfill": "^1.5.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"

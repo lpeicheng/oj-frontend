@@ -5,6 +5,7 @@ import { computed, ref } from "vue";
 import { routes } from "../router/routes";
 import checkAccess from "@/access/checkAccess";
 import ACCESS_ENUM from "@/access/accessEnum";
+import { LoginUserVO, UserControllerService } from "../../generated";
 
 const router = useRouter();
 const store = useStore();
@@ -17,6 +18,13 @@ const doMenuClick = (key: string) => {
   });
 };
 
+const loginUser: LoginUserVO = computed(
+  () => store.state.user?.loginUser
+) as LoginUserVO;
+const logout = () => {
+  UserControllerService.userLogoutUsingPost();
+  location.reload();
+};
 //展示菜单路由数组
 const visibleRoutes = computed(() => {
   return routes.filter((item, index) => {
@@ -73,8 +81,91 @@ setTimeout(() => {
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <div>
-        {{ store.state.user?.loginUser?.userAccount ?? "未登录" }}
+      <div class="userAvatar">
+        <a-dropdown trigger="hover">
+          <a-avatar shape="circle">
+            <template
+              v-if="loginUser && loginUser.userRole as string !== ACCESS_ENUM.NOT_LOGIN"
+            >
+              <template v-if="loginUser.userAvatar">
+                <img
+                  class="avatarImg"
+                  alt="avatar"
+                  :src="loginUser.userAvatar"
+                />
+              </template>
+              <template v-else>
+                <a-avatar>
+                  <IconUser />
+                </a-avatar>
+              </template>
+            </template>
+            <template v-else>
+              <a-avatar>未登录</a-avatar>
+            </template>
+          </a-avatar>
+          <template #content>
+            <template
+              v-if="loginUser && loginUser.userRole as string !== ACCESS_ENUM.NOT_LOGIN"
+            >
+              <a-doption>
+                <template #icon>
+                  <icon-idcard />
+                </template>
+                <template #default>
+                  <a-anchor-link
+                    @click="
+                      router.push({
+                        path: '/about',
+                      })
+                    "
+                    >个人信息
+                  </a-anchor-link>
+                </template>
+              </a-doption>
+              <a-doption>
+                <template #icon>
+                  <icon-poweroff />
+                </template>
+                <template #default>
+                  <a-anchor-link @click="logout">退出登录</a-anchor-link>
+                </template>
+              </a-doption>
+            </template>
+            <template v-else>
+              <a-doption>
+                <template #icon>
+                  <icon-user />
+                </template>
+                <template #default>
+                  <a-anchor-link
+                    @click="
+                      router.push({
+                        path: '/user/login',
+                      })
+                    "
+                    >用户登录
+                  </a-anchor-link>
+                </template>
+              </a-doption>
+              <a-doption>
+                <template #icon>
+                  <icon-user-add />
+                </template>
+                <template #default>
+                  <a-anchor-link
+                    @click="
+                      router.push({
+                        path: '/user/register',
+                      })
+                    "
+                    >用户注册
+                  </a-anchor-link>
+                </template>
+              </a-doption>
+            </template>
+          </template>
+        </a-dropdown>
       </div>
     </a-col>
   </a-row>

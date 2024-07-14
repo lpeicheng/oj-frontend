@@ -59,6 +59,7 @@ import {
   Question,
   QuestionControllerService,
   QuestionQueryRequest,
+  UserControllerService,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import * as querystring from "querystring";
@@ -144,9 +145,15 @@ const router = useRouter();
  * @param question
  */
 const toQuestionPage = (question: Question) => {
-  router.push({
-    path: `/view/question/${question.id}`,
-  });
+  const res = UserControllerService.getLoginUserUsingGet();
+  if (res !== null) {
+    router.push({
+      path: `/view/question/${question.id}`,
+    });
+  } else {
+    message.error("请先登录");
+    router.push("/user/login");
+  }
 };
 
 /**
